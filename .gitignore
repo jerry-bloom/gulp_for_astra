@@ -1,0 +1,15 @@
+# mac files
+.DS_Store
+
+# node files
+node_modules
+
+# dev folders
+dev
+prefix
+preprod
+prod
+
+# sublime text files
+*.sublime-workspace
+*.sublime-project
