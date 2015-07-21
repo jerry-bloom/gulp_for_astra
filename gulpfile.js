@@ -57,7 +57,7 @@ gulp.task('webserver', function() {
 
 gulp.task('compile-scss', function () {
     return gulp.src('*.scss', {cwd:DEV_SCSS_DIR})
-        .pipe(sass())
+        .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest(DEV_CSS_DIR));
 });
 
@@ -213,15 +213,24 @@ gulp.task('prefix-html', function () {
         .pipe(replace(Project.prefix + '_', ''))
 
         // id css
-        .pipe(cheerio(function ($, gulp_file_object) {
-            $("*").each(function (i, element) {
-                prefix_HTML_ID_CLASS( $(element), Project.prefix);
-            });
+        
+        // .pipe(cheerio(function ($, gulp_file_object) {
+        //     $("*").each(function (i, element) {
+        //         prefix_HTML_ID_CLASS( $(element), Project.prefix);
+        //     });
+        // }))
+        .pipe(cheerio({
+            run: function ($, gulp_file_object) {
+                $("*").each(function (i, element) {
+                    prefix_HTML_ID_CLASS( $(element), Project.prefix);
+                });
+            },
+            parserOptions: {
+                xmlMode: false
+            }
         }))
-
         // image paths
         .pipe(replace(/(?:\"|\')(?:assets\/)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
-
 
 
         .pipe(gulp.dest(PREFIX_ROOT_DIR));
