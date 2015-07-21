@@ -15,10 +15,6 @@ var runSequence = require('run-sequence');
 var fs = require("fs");
 var inject = require('gulp-inject-string');
 var concat = require('gulp-concat');
- 
-
-
-
 //var cssMinify = require('gulp-minify-css');
 
 
@@ -40,7 +36,7 @@ var PROD_DIR = './prod/';
 
 
 var Project = {
-    prefix: "jerry15",
+    prefix: "shoebag15",
     jspPath: "${baseUrlAssets}/dyn_img/cat_splash/",
     exclude: {
         protected_id_class: ["BrightcoveExperience","myExperience4065945907001"],
@@ -224,7 +220,9 @@ gulp.task('prefix-html', function () {
         }))
 
         // image paths
-        .pipe(replace(new RegExp('assets/', 'g'), 'assets/' + Project.prefix + '_'))
+        .pipe(replace(/(?:\"|\')(?:assets\/)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
+
+
 
         .pipe(gulp.dest(PREFIX_ROOT_DIR));
 });
@@ -263,7 +261,6 @@ function prefix_array(prefix_name, string_name) {
 
 
 
-// put in prod (one time execution)
 
 
 
