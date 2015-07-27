@@ -62,7 +62,10 @@ gulp.task('compile-scss', function () {
 });
 
 gulp.task('compile-js', function() {
-    return gulp.src([DEV_DEVJS_DIR+'fastclick.js',DEV_DEVJS_DIR+'TweenMax.min.js',DEV_DEVJS_DIR+Project.prefix+'.js'])
+    return gulp.src([DEV_DEVJS_DIR+'fastclick.js',
+        DEV_DEVJS_DIR+'jquery.address-1.6.min.js',
+        DEV_DEVJS_DIR+'TweenMax.min.js',
+        DEV_DEVJS_DIR+Project.prefix+'.js'])
         //.pipe(uglify())
         .pipe(concat(Project.prefix+'.js'))
         .pipe(gulp.dest(DEV_JS_DIR));
@@ -164,8 +167,8 @@ gulp.task('prefix-css', function() {
         .pipe(replace(Project.prefix + '_', ''))
 
         // classes and ids
-        .pipe(replace(/(\.)-?[_a-zA-Z]+[_a-zA-Z0-9-]*(\s|{)/g, function(fullmatch) { return '.' + Project.prefix + '_' + fullmatch.slice(1); }))
-        .pipe(replace(/(\#)-?[_a-zA-Z]+[_a-zA-Z0-9-]*(\s|{)/g, function(fullmatch) { return '#' + Project.prefix + '_' + fullmatch.slice(1); }))
+        .pipe(replace(/(\.)-?[_a-zA-Z]+[_a-zA-Z0-9-:]*(\s|{)/g, function(fullmatch) { return '.' + Project.prefix + '_' + fullmatch.slice(1); }))
+        .pipe(replace(/(\#)-?[_a-zA-Z]+[_a-zA-Z0-9-:]*(\s|{)/g, function(fullmatch) { return '#' + Project.prefix + '_' + fullmatch.slice(1); }))
 
         // assets path
         .pipe(replace(new RegExp('../assets/', 'g'), '../assets/' + Project.prefix + '_'))
@@ -190,6 +193,7 @@ gulp.task('prefix-js', function () {
         .pipe(replace(/(?:find\()(?:\s*|)(?:\"|\')(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
         .pipe(replace(/(?:next\()(?:\s*|)(?:\"|\')(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
         .pipe(replace(/(?:previous\()(?:\s*|)(?:\"|\')(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
+            
 
         .pipe(replace(/(?:addClass\()(?:\s*|)(?:\"|\')/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
         .pipe(replace(/(?:removeClass\()(?:\s*|)(?:\"|\')/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
