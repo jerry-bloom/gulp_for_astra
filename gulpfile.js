@@ -38,13 +38,20 @@ var PROD_DIR = './prod/';
 var Project = {
     prefix: "shoebag15",
     jspPath: "${baseUrlAssets}/dyn_img/cat_splash/",
-    exclude: {
-        protected_id_class: ["BrightcoveExperience","myExperience4065945907001"],
-        protected_js: [],
-        protected_css: []
-    }
-};
+    exclude:{
+            protected_id_class: ["BrightcoveExperience",
+                                "myExperience4065945907001",
+                                "fa",
+                                "fa-chevron-down",
+                                "fa-angle-up",
+                                "fa-twitter",
+                                "fa-pinterest-p",
+                                "fa-facebook"
+                                ]
+            }
+    };
 
+// 'background-image':'url(' + '../"+ assetsServer + "/dyn_img/cat_splash/spfall15_index0_out.png' + ')'  in js file
 
 
 gulp.task('webserver', function() {
@@ -56,7 +63,7 @@ gulp.task('webserver', function() {
 
 
 gulp.task('compile-scss', function () {
-    return gulp.src('*.scss', {cwd:DEV_SCSS_DIR})
+    return gulp.src(Project.prefix+'.scss', {cwd:DEV_SCSS_DIR})
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest(DEV_CSS_DIR));
 });
@@ -217,12 +224,6 @@ gulp.task('prefix-html', function () {
         .pipe(replace(Project.prefix + '_', ''))
 
         // id css
-        
-        // .pipe(cheerio(function ($, gulp_file_object) {
-        //     $("*").each(function (i, element) {
-        //         prefix_HTML_ID_CLASS( $(element), Project.prefix);
-        //     });
-        // }))
         .pipe(cheerio({
             run: function ($, gulp_file_object) {
                 $("*").each(function (i, element) {
@@ -400,15 +401,17 @@ gulp.task('prod-assets', function () {
         .pipe(gulp.dest(PROD_DIR));
 });
 
+
+//task replaced by adding var creative_baseUrlAssets in js files
+/*
 gulp.task('prod-js', function(){
     return gulp.src(PREFIX_JS_DIR + Project.prefix + '.js')
         .pipe(replace(new RegExp('assets/', 'g'), '"+ assetsServer + "/dyn_img/cat_splash/'))
         .pipe(gulp.dest(PROD_DIR));
 });
+*/
 
 
-
-// 'background-image':'url(' + '../"+ assetsServer + "/dyn_img/cat_splash/spfall15_index0_out.png' + ')'  in js file
 
 
 
@@ -442,7 +445,8 @@ gulp.task('prod-jsp', function(){
 
 
 gulp.task('prod', function(){
-    runSequence('prod-empty', 'prod-assets', 'prod-js', 'prod-jsp');
+    runSequence('prod-empty', 'prod-assets', 'prod-jsp');
+//    runSequence('prod-empty', 'prod-assets', 'prod-js', 'prod-jsp');
 });
 
 
