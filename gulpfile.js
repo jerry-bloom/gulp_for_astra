@@ -42,8 +42,10 @@ var Project = {
             protected_id_class: ["BrightcoveExperience",
                                 "myExperience4065945907001",
                                 "fa",
+                                "fa-chevron-up",
                                 "fa-chevron-down",
                                 "fa-angle-up",
+                                "fa-angle-down",
                                 "fa-twitter",
                                 "fa-pinterest-p",
                                 "fa-facebook"
@@ -68,12 +70,17 @@ gulp.task('compile-scss', function () {
         .pipe(gulp.dest(DEV_CSS_DIR));
 });
 
-gulp.task('compile-js', function() {
+gulp.task('compiledevlib-js', function() {
     return gulp.src([DEV_DEVJS_DIR+'fastclick.js',
         DEV_DEVJS_DIR+'jquery.address-1.6.min.js',
-        DEV_DEVJS_DIR+'TweenMax.min.js',
+        DEV_DEVJS_DIR+'TweenMax.min.js'])
+        .pipe(concat(Project.prefix+'_lib.js'))
+        .pipe(gulp.dest(DEV_DEVJS_DIR));
+});
+
+gulp.task('compiledev-js', function() {
+    return gulp.src([DEV_DEVJS_DIR+Project.prefix+'_lib.js',
         DEV_DEVJS_DIR+Project.prefix+'.js'])
-        //.pipe(uglify())
         .pipe(concat(Project.prefix+'.js'))
         .pipe(gulp.dest(DEV_JS_DIR));
 });
@@ -90,7 +97,7 @@ gulp.task('watch-assets', function(){
     runSequence('prefix-assets','preprod-assets');
 });
 gulp.task('watch-js', function(){
-    runSequence('compile-js','prefix-js','preprod-js');
+    runSequence('compiledevlib-js','compiledev-js','prefix-js','compileprefix-js','preprod-js');
 });
 
 gulp.task('watch-html', function(){
@@ -190,12 +197,16 @@ gulp.task('prefix-css', function() {
 
 
 gulp.task('prefix-js', function () {
-    return gulp.src(Project.prefix+'.js', {cwd:DEV_JS_DIR}) 
+    return gulp.src(Project.prefix+'.js', {cwd:DEV_DEVJS_DIR}) 
         // reset
         .pipe(replace(Project.prefix + '_', ''))
 
 
         // prefix classes and ids and assets
+        
+        //for more than one jquery selects
+        .pipe(replace(/(\,)(?:\s*|)(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
+
         .pipe(replace(/(?:\$\()(?:\s*|)(?:\"|\')(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
         .pipe(replace(/(?:find\()(?:\s*|)(?:\"|\')(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
         .pipe(replace(/(?:next\()(?:\s*|)(?:\"|\')(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
@@ -212,7 +223,13 @@ gulp.task('prefix-js', function () {
         .pipe(gulp.dest(PREFIX_JS_DIR));
 });
 
-
+gulp.task('compileprefix-js', function() {
+    return gulp.src( [DEV_DEVJS_DIR+Project.prefix+'_lib.js',
+        PREFIX_JS_DIR+Project.prefix+'.js'] )
+        //.pipe(uglify())
+        .pipe(concat(Project.prefix+'.js'))
+        .pipe(gulp.dest(PREFIX_JS_DIR));
+});
 
 
 
