@@ -36,7 +36,7 @@ var PROD_DIR = './prod/';
 
 
 var Project = {
-    prefix: "shoebag15",
+    prefix: "ugg_fall15",
     jspPath: "${baseUrlAssets}/dyn_img/cat_splash/",
     exclude:{
             protected_id_class: ["BrightcoveExperience",
@@ -48,7 +48,8 @@ var Project = {
                                 "fa-angle-down",
                                 "fa-twitter",
                                 "fa-pinterest-p",
-                                "fa-facebook"
+                                "fa-facebook",
+                                "lazy"
                                 ]
             }
     };
@@ -67,12 +68,14 @@ gulp.task('webserver', function() {
 gulp.task('compile-scss', function () {
     return gulp.src(Project.prefix+'.scss', {cwd:DEV_SCSS_DIR})
         .pipe(sass().on('error', sass.logError))
+//        .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError));
         .pipe(gulp.dest(DEV_CSS_DIR));
 });
 
 gulp.task('compiledevlib-js', function() {
     return gulp.src([DEV_DEVJS_DIR+'fastclick.js',
         DEV_DEVJS_DIR+'jquery.address-1.6.min.js',
+        DEV_DEVJS_DIR+'jquery.lazyload.js',
         DEV_DEVJS_DIR+'TweenMax.min.js'])
         .pipe(concat(Project.prefix+'_lib.js'))
         .pipe(gulp.dest(DEV_DEVJS_DIR));
@@ -211,7 +214,8 @@ gulp.task('prefix-js', function () {
         .pipe(replace(/(?:find\()(?:\s*|)(?:\"|\')(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
         .pipe(replace(/(?:next\()(?:\s*|)(?:\"|\')(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
         .pipe(replace(/(?:previous\()(?:\s*|)(?:\"|\')(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
-            
+        .pipe(replace(/(?:remove\()(?:\s*|)(?:\"|\')(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
+
 
         .pipe(replace(/(?:addClass\()(?:\s*|)(?:\"|\')/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
         .pipe(replace(/(?:removeClass\()(?:\s*|)(?:\"|\')/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
@@ -418,6 +422,13 @@ gulp.task('prod-assets', function () {
         .pipe(gulp.dest(PROD_DIR));
 });
 
+//change $ to $b in js file
+gulp.task('prod-jquerydollarb', function () {
+    return gulp.src(["*.js"], {cwd:PROD_DIR})
+        .pipe(replace(/(\$\()/g, function(fullmatch,group0) { return '$b('; }))
+        .pipe(gulp.dest(PROD_DIR));
+});
+
 
 //task replaced by adding var creative_baseUrlAssets in js files
 /*
@@ -427,6 +438,7 @@ gulp.task('prod-js', function(){
         .pipe(gulp.dest(PROD_DIR));
 });
 */
+
 
 
 
@@ -460,11 +472,26 @@ gulp.task('prod-jsp', function(){
 
 
 
+gulp.task('prod-customCSS', function() {
+    return gulp.src([DEV_SCSS_DIR+'custom.css',
+        PROD_DIR+Project.prefix+'.css'])
+        .pipe(concat(Project.prefix+'.css'))
+        .pipe(gulp.dest(PROD_DIR));
+});
+
+
 
 gulp.task('prod', function(){
-    runSequence('prod-empty', 'prod-assets', 'prod-jsp');
+    runSequence('prod-empty', 'prod-assets', 'prod-customCSS', 'prod-jsp');
+//    runSequence('prod-empty', 'prod-assets','prod-jquerydollarb', 'prod-jsp');
 //    runSequence('prod-empty', 'prod-assets', 'prod-js', 'prod-jsp');
 });
+
+// add auto disable border color for debugging
+// minify js for final version
+// minify sass for final version
+
+
 
 
 
