@@ -36,8 +36,8 @@ var PROD_DIR = './prod/';
 
 
 var Project = {
-    prefix: "resort_spring16",
-    jspName: "spring-resort-trends-2016",
+    prefix: "makeupdate_spring16",
+    jspName: "Makeup-Date-2016",
     jspPath: "${baseUrlAssets}/dyn_img/cat_splash/",
     exclude:{
             protected_id_class: ["BrightcoveExperience",
@@ -74,12 +74,9 @@ gulp.task('compile-scss', function () {
 });
 
 gulp.task('compiledevlib-js', function() {
-    return gulp.src([DEV_DEVJS_DIR+'fastclick.js',
-        DEV_DEVJS_DIR+'jquery.address-1.6.min.js',
-        DEV_DEVJS_DIR+'jquery.bxslider.js',
-        DEV_DEVJS_DIR+'jquery.lazyload.js',
-        //DEV_DEVJS_DIR+'foundation.min.js',
-        DEV_DEVJS_DIR+'TweenMax.min.js'])
+    return gulp.src([
+        DEV_DEVJS_DIR + '**',
+        '!' + DEV_DEVJS_DIR + Project.prefix + '.js'])
         .pipe(concat(Project.prefix+'_lib.js'))
         .pipe(gulp.dest(DEV_DEVJS_DIR));
 });
@@ -97,7 +94,7 @@ gulp.task('watch', function() {
     gulp.watch('dev/assets/*.*', ['watch-assets']);
     gulp.watch('dev/devjs/*.js', ['watch-js']);
     gulp.watch('dev/*.html', ['watch-html']);
-    gulp.watch('dev/scss/*.scss', ['watch-scss']);
+    gulp.watch('dev/scss/**/*.scss', ['watch-scss']);
 });
 gulp.task('watch-assets', function(){
     runSequence('prefix-assets','preprod-assets');
@@ -222,6 +219,7 @@ gulp.task('prefix-js', function () {
 
         .pipe(replace(/(?:addClass\()(?:\s*|)(?:\"|\')/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
         .pipe(replace(/(?:removeClass\()(?:\s*|)(?:\"|\')/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
+        .pipe(replace(/(?:toggleClass\()(?:\s*|)(?:\"|\')/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
         .pipe(replace("assets/'", "assets/" + Project.prefix + '_'))
 
         // imagepath
