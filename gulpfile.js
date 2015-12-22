@@ -76,7 +76,8 @@ gulp.task('compile-scss', function () {
 gulp.task('compiledevlib-js', function() {
     return gulp.src([
         DEV_DEVJS_DIR + '**',
-        '!' + DEV_DEVJS_DIR + Project.prefix + '.js'])
+        '!' + DEV_DEVJS_DIR + Project.prefix + '.js',
+        '!' + DEV_DEVJS_DIR + Project.prefix + '_lib.js'])
         .pipe(concat(Project.prefix+'_lib.js'))
         .pipe(gulp.dest(DEV_DEVJS_DIR));
 });
