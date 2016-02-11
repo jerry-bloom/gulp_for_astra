@@ -18,6 +18,16 @@ var concat = require('gulp-concat');
 //var cssMinify = require('gulp-minify-css');
 
 
+var tar = require('gulp-tar');
+var gzip = require('gulp-gzip');
+
+
+
+
+
+
+
+
 
 var DEV_ROOT_DIR = './dev/';
 var DEV_DEVJS_DIR = DEV_ROOT_DIR + 'devjs/';
@@ -32,12 +42,12 @@ var PREFIX_CSS_DIR = PREFIX_ROOT_DIR + 'css/';
 var PREFIX_ASSETS_DIR = PREFIX_ROOT_DIR + 'assets/';
 
 var PREPROD_DIR = './preprod/';
-var PROD_DIR = './prod/';
+var PROD_DIR = './prod/cat_splash/';
 
 
 var Project = {
     prefix: "makeupdate_spring16",
-    jspName: "Makeup-Date-2016",
+    jspName: "makeup-guide",//temporary due to fail from production
     jspPath: "${baseUrlAssets}/dyn_img/cat_splash/",
     exclude:{
             protected_id_class: ["BrightcoveExperience",
@@ -60,6 +70,7 @@ var Project = {
 
 gulp.task('webserver', function() {
     connect.server({
+        port: 8888,
         livereload: true
     });
 });
@@ -216,6 +227,7 @@ gulp.task('prefix-js', function () {
         .pipe(replace(/(?:next\()(?:\s*|)(?:\"|\')(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
         .pipe(replace(/(?:previous\()(?:\s*|)(?:\"|\')(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
         .pipe(replace(/(?:remove\()(?:\s*|)(?:\"|\')(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
+        .pipe(replace(/(?:not\()(?:\s*|)(?:\"|\')(\#|\.)/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
 
 
         .pipe(replace(/(?:addClass\()(?:\s*|)(?:\"|\')/g, function(fullmatch,group0) { return fullmatch + Project.prefix + '_'; }))
@@ -483,11 +495,25 @@ gulp.task('prod-customCSS', function() {
 
 
 
+gulp.task('prod-tarzip', function() {
+    return gulp.src('./prod/**')
+        .pipe(tar('prodspecial.tar'))
+        //.pipe(gzip())
+        .pipe(gulp.dest('./'));
+});
+
+
+
 gulp.task('prod', function(){
-    runSequence('prod-empty', 'prod-assets', 'prod-customCSS', 'prod-jsp');
+    runSequence('prod-empty', 'prod-assets', 'prod-customCSS', 'prod-jsp', 'prod-tarzip');
 //    runSequence('prod-empty', 'prod-assets','prod-jquerydollarb', 'prod-jsp');
 //    runSequence('prod-empty', 'prod-assets', 'prod-js', 'prod-jsp');
 });
+
+
+
+
+
 
 // add auto disable border color for debugging
 // minify js for final version
